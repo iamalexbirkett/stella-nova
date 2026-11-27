@@ -1,6 +1,0 @@
-# AI and search crawlers are welcome here.
-User-agent: *
-Allow: /
-Disallow: /api/
-
-Sitemap: https://stellanovainc.com/sitemap-index.xml
