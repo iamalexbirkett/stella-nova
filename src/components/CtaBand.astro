@@ -1,0 +1,46 @@
+---
+import Mark from './Mark.astro';
+interface Props { heading?: string; body?: string; label?: string; href?: string }
+const {
+  heading = 'Tell me the part you’d leave out of the pitch.',
+  body = 'A short form, read by me, answered by me. No sales team, no sequence.',
+  label = 'Talk to me',
+  href = '/contact',
+} = Astro.props;
+---
+<section class="cta dark">
+  <div class="cta__glow" aria-hidden="true"></div>
+  <Mark size={520} class="cta__mark" />
+  <div class="wrap cta__inner">
+    <h2>{heading}</h2>
+    <p class="lede muted">{body}</p>
+    <a href={href} class="btn btn--amber">{label} <span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</section>
+<style>
+  .cta {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: linear-gradient(180deg, var(--petrol-deep), var(--schott-black) 75%);
+    border-bottom: 1px solid rgb(237 230 217 / 0.08);
+  }
+  .cta__glow {
+    position: absolute;
+    width: 640px; height: 640px;
+    right: -120px; top: 50%;
+    transform: translateY(-50%);
+    background: radial-gradient(circle, rgb(224 146 58 / 0.32), rgb(224 146 58 / 0.06) 40%, transparent 68%);
+    filter: blur(8px);
+  }
+  :global(.cta__mark) {
+    position: absolute;
+    right: -60px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--bone-paper);
+    opacity: 0.06;
+  }
+  .cta__inner { position: relative; }
+  .cta h2 { max-width: 16ch; }
+  .cta .lede { margin-bottom: 2rem; }
+</style>

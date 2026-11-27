@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getCollection, render } from 'astro:content';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const url = `${site.url}/writing/${post.id}`;
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+    url,
+    mainEntityOfPage: url,
+    author: { '@id': `${site.url}/about#alex` },
+    publisher: { '@id': `${site.url}/#org` },
+  },
+];
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+<Base title={post.data.title} description={post.data.description} schema={schema} ogType="article">
+  <article class="post">
+    <header class="wrap post__head">
+      <a href="/writing" class="post__back">← Writing</a>
+      <h1>{post.data.title}</h1>
+      <p class="lede muted">{post.data.description}</p>
+      <p class="post__meta">Alex Birkett · <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time></p>
+    </header>
+    <div class="wrap">
+      <div class="post__body">
+        <Content />
+      </div>
+    </div>
+  </article>
+  <CtaBand />
+</Base>
+
+<style>
+  .post { padding-block: clamp(3rem, 2rem + 4vw, 6rem); }
+  .post__head { max-width: calc(var(--measure) + 2 * var(--gutter)); margin-inline: 0; }
+  .post__head h1 { font-size: var(--step-4); }
+  .post__back { font-size: var(--step--1); text-decoration: none; display: inline-block; margin-bottom: 2rem; color: var(--ash-dark); }
+  .post__meta { font-size: var(--step--1); color: var(--ash-dark); padding-bottom: 2rem; border-bottom: var(--rule); }
+  .post__body { max-width: var(--measure); font-size: 1.12rem; line-height: 1.75; }
+  .post__body :global(h2) { font-size: var(--step-3); margin-top: 2.5em; }
+  .post__body :global(h3) { font-size: var(--step-2); margin-top: 2em; }
+  .post__body :global(ul) { list-style: disc; padding-left: 1.25rem; margin-bottom: 1em; }
+  .post__body :global(ol) { padding-left: 1.25rem; margin-bottom: 1em; }
+  .post__body :global(blockquote) { margin: 2em 0; padding-left: 1.25rem; border-left: 3px solid var(--monk-red); font-family: var(--font-heading); font-size: var(--step-1); }
+  .post__body :global(a) { text-decoration-color: var(--amber-window); }
+  .post__body :global(code) { font-size: 0.9em; background: var(--bone-deep); padding: 0.1em 0.3em; }
+  .post__body :global(img) { margin: 2em 0; border: 1px solid var(--cold-ash); }
+</style>

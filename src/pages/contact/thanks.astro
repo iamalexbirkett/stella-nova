@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import Mark from '../../components/Mark.astro';
+---
+<Base title="Thanks">
+  <meta name="robots" content="noindex" slot="head" />
+  <section class="thanks">
+    <div class="wrap">
+      <Mark size={72} class="thanks__mark" />
+      <h1>Got it.</h1>
+      <p class="lede">Your message is in my inbox, not a queue. I’ll reply personally, usually within a couple of business days.</p>
+      <a href="/" class="link-arrow">Back to the homepage <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Base>
+<style>
+  .thanks { padding-block: clamp(5rem, 3rem + 8vw, 10rem); }
+  :global(.thanks__mark) { color: var(--monk-red); margin-bottom: 2rem; }
+  .thanks .lede { max-width: 40ch; margin-bottom: 2rem; }
+</style>

@@ -1,0 +1,81 @@
+---
+import Mark from './Mark.astro';
+import { offers, site } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer dark">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <a href="/" class="footer__logo" aria-label="Stella Nova, home">
+          <Mark size={40} />
+          <span>Stella Nova</span>
+        </a>
+        <p class="muted">{site.tagline}. Helping investors and brands find their way through AI search.</p>
+      </div>
+      <nav class="footer__cols" aria-label="Footer">
+        <div>
+          <h2>Work with me</h2>
+          <ul>
+            {offers.map((o) => <li><a href={`/work-with-me/${o.slug}`}>{o.name}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <h2>Stella Nova</h2>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/writing">Writing</a></li>
+            <li><a href="/contact">Talk to me</a></li>
+            <li><a href={site.founder.url} rel="me">alexbirkett.com</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer__base">
+      <span>© {year} {site.legalName}</span>
+      <span class="footer__sign">Eye level, high ceiling.</span>
+    </div>
+  </div>
+</footer>
+<style>
+  .footer { padding-block: clamp(3.5rem, 3rem + 3vw, 6rem) 2rem; }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgb(237 230 217 / 0.15);
+  }
+  .footer__logo {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .footer__logo :global(svg) { color: var(--monk-red); }
+  .footer__brand p { max-width: 34ch; }
+  .footer__cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .footer__cols h2 {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cold-ash);
+    margin-bottom: 1rem;
+  }
+  .footer__cols li { margin-bottom: 0.5rem; }
+  .footer__cols a { text-decoration: none; }
+  .footer__base {
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    padding-top: 1.5rem;
+    font-size: var(--step--1);
+    color: var(--cold-ash);
+  }
+  .footer__sign { font-family: var(--font-heading); font-style: italic; font-size: var(--step-0); color: var(--bone-paper); }
+  @media (max-width: 720px) {
+    .footer__top { grid-template-columns: 1fr; }
+  }
+</style>

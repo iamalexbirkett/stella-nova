@@ -1,0 +1,516 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { offers, proofPoints, helpedGrow, appearances, bylines, site } from '../data/site';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: 'Ways to work with Stella Nova',
+    provider: { '@id': `${site.url}/#org` },
+    itemListElement: offers.map((o) => ({
+      '@type': 'Offer',
+      url: `${site.url}/work-with-me/${o.slug}`,
+      itemOffered: { '@type': 'Service', name: o.name, description: o.short },
+      priceSpecification: {
+        '@type': o.priceUnit ? 'UnitPriceSpecification' : 'PriceSpecification',
+        priceCurrency: 'USD',
+        minPrice: o.priceValue,
+        ...(o.priceUnit ? { unitCode: o.priceUnit } : {}),
+      },
+    })),
+  },
+];
+---
+<Base title={site.name} headerTone="dark" schema={schema}>
+  <!-- HERO -->
+  <section class="hero dark">
+    <div class="hero__sky" aria-hidden="true">
+      <div class="hero__halftone"></div>
+      <div class="hero__glow"></div>
+      <Mark size={120} class="hero__star" />
+    </div>
+    <div class="wrap hero__inner">
+      <p class="eyebrow">{site.tagline}</p>
+      <h1>Search changed.<br /><span class="hero__red">Most playbooks didn’t.</span></h1>
+      <p class="lede hero__lede">
+        AI search is rewriting how buyers find, trust and choose. Stella Nova helps investors and the companies
+        they back see clearly through it, and builds the experimentation habit that turns a strong brand into the{' '}
+        <em>N of 1</em> in its category.
+      </p>
+      <div class="hero__actions">
+        <a href="/contact" class="btn btn--amber">Talk to me <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="#work" class="link-arrow">Ways to work together <span class="arrow" aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+    <div class="wrap hero__strip">
+      <span>Organic growth research</span>
+      <span>AI search visibility</span>
+      <span>Experimentation programs</span>
+      <span>Team &amp; operating systems</span>
+    </div>
+  </section>
+
+  <!-- THE FOG -->
+  <section class="section fog">
+    <div class="wrap fog__grid">
+      <div>
+        <p class="eyebrow">The thing nobody says out loud</p>
+        <h2>Nobody has the map yet. Including the people selling it.</h2>
+      </div>
+      <div class="fog__body">
+        <p class="lede">
+          Every week brings a new model, a new search surface, and a new dashboard promising your “AI share of voice.”
+          Most of it is guesswork with a chart on top.
+        </p>
+        <p class="prose">
+          The companies that win this stretch won’t be the ones with the most confident vendor. They’ll be the ones that
+          measure honestly, run real experiments, and move before the answer is obvious. That’s a muscle, not a project.
+          I help teams build it.
+        </p>
+        <ol class="credo">
+          <li><h3>Being the answer matters more than ranking for the question.</h3></li>
+          <li><h3>Best practices make you average. Experiments make you singular.</h3></li>
+          <li><h3>If you can’t tie it to pipeline, it’s a hobby.</h3></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO -->
+  <section class="section section--flush-top who">
+    <div class="wrap">
+      <p class="eyebrow">Who I work with</p>
+      <h2 class="who__title">Two kinds of rooms.</h2>
+      <div class="who__grid">
+        <article class="who__card who__card--investor">
+          <p class="who__kicker">For investors</p>
+          <h3>VC and PE firms, and the companies they back</h3>
+          <p>
+            You’re hearing the same question from twelve portfolio companies: what is AI search doing to our organic
+            pipeline? I answer it once, at the portfolio level, then go deep where the stakes are highest.
+          </p>
+          <ul class="who__list">
+            <li>Portfolio-wide training so every team learns the new rules at once</li>
+            <li>AI visibility assessments for diligence and value-creation plans</li>
+            <li>One senior advisor across companies, instead of a dozen agencies</li>
+          </ul>
+          <a href="/work-with-me/training" class="link-arrow">Workshops for portfolios <span class="arrow" aria-hidden="true">→</span></a>
+        </article>
+        <article class="who__card who__card--brand">
+          <p class="who__kicker">For brands</p>
+          <h3>Category leaders, and the challengers coming for them</h3>
+          <p>
+            You already have a team, a budget, and an agency or two. What you need is someone who’ll tell you what’s
+            working, what’s noise, and what to test next, then hold the bar high enough to get there.
+          </p>
+          <ul class="who__list">
+            <li>An honest baseline of where you show up in AI answers, and where you don’t</li>
+            <li>A prioritized roadmap your own team can run</li>
+            <li>Hands-on leadership when the stakes justify it</li>
+          </ul>
+          <a href="/work-with-me/audits" class="link-arrow">Start with an audit <span class="arrow" aria-hidden="true">→</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFERS -->
+  <section class="section offers" id="work">
+    <div class="wrap">
+      <div class="offers__head">
+        <div>
+          <p class="eyebrow">Work with me</p>
+          <h2>Four ways in.</h2>
+        </div>
+        <p class="lede muted">
+          Each one is built to leave your team stronger than it found it, not more dependent on me.
+        </p>
+      </div>
+      <ol class="offers__grid">
+        {offers.map((o, i) => (
+          <li class:list={['offer', { 'offer--bold': o.seats }]}>
+            <a href={`/work-with-me/${o.slug}`}>
+              <span class="offer__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{o.name}</h3>
+              <p>{o.short}</p>
+              <span class="offer__foot">
+                <span class="offer__price">{o.price}</span>
+                {o.seats && <span class="offer__seats">{o.seats.total} seats, total</span>}
+                <span class="arrow" aria-hidden="true">→</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- APPROACH -->
+  <section class="section approach dark">
+    <div class="wrap approach__grid">
+      <div>
+        <p class="eyebrow">How I work</p>
+        <h2>Eye level.<br />High ceiling.</h2>
+        <p class="muted prose">
+          Plain talk, no theater, and a bar set higher than you’d set it yourself. Then I stay in the room while your
+          team clears it.
+        </p>
+      </div>
+      <ol class="credo approach__list">
+        <li>
+          <div>
+            <h3>Research before opinions.</h3>
+            <p class="muted">I measure where you actually stand before I tell you what to do about it.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Experiments over best practices.</h3>
+            <p class="muted">Every recommendation ships with a way to prove it wrong. Keep what works, kill what doesn’t.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Build the muscle, not the dependency.</h3>
+            <p class="muted">Teams, operating systems and habits that keep compounding after I leave. That’s the point.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Revenue is the scoreboard.</h3>
+            <p class="muted">Visibility is a means. Pipeline and revenue are the end, and that’s how we keep score.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <section class="section proof">
+    <div class="wrap">
+      <div class="proof__head">
+        <div>
+          <p class="eyebrow">Where I’ve done the work</p>
+          <h2>Built inside growth teams, not beside them.</h2>
+        </div>
+        <p class="muted prose">
+          Before Stella Nova I built experimentation programs, publishing engines and data products from the inside.
+          A few of the numbers:
+        </p>
+      </div>
+      <dl class="proof__stats">
+        {proofPoints.map((p) => (
+          <div class="proof__stat">
+            <dt>{p.figure}</dt>
+            <dd>{p.label}</dd>
+          </div>
+        ))}
+      </dl>
+      <div class="proof__row">
+        <p class="proof__label">Organic programs I’ve built or helped grow</p>
+        <ul class="proof__names">
+          {helpedGrow.map((n) => <li>{n}</li>)}
+        </ul>
+      </div>
+      <div class="proof__split">
+        <div>
+          <p class="proof__label">On stage and on mic</p>
+          <ul class="appear">
+            {appearances.slice(0, 5).map((a) => (
+              <li>
+                <span class="appear__kind">{a.kind}</span>
+                <span class="appear__title">{a.title}</span>
+                <span class="appear__where muted">{a.where}</span>
+              </li>
+            ))}
+          </ul>
+          <a href="/about#speaking" class="link-arrow">All talks and podcasts <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div>
+          <p class="proof__label">Written for or quoted in</p>
+          <ul class="proof__names proof__names--small">
+            {bylines.map((n) => <li>{n}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section class="section section--tight writing-teaser">
+    <div class="wrap writing-teaser__grid">
+      <div>
+        <p class="eyebrow">Field notes</p>
+        <h2>Research, experiments, and unpopular opinions.</h2>
+      </div>
+      {posts.length > 0 ? (
+        <ul class="writing-teaser__list">
+          {posts.map((p) => (
+            <li>
+              <a href={`/writing/${p.id}`}>
+                <h3>{p.data.title}</h3>
+                <p class="muted">{p.data.description}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="writing-teaser__empty">
+          <p class="lede">
+            The first pieces are on the bench: what we’re learning about AI search, written up as we learn it.
+          </p>
+          <a href="/writing" class="link-arrow">Go to writing <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  /* HERO */
+  .hero {
+    position: relative;
+    margin-top: -77px;
+    padding-top: calc(77px + clamp(4rem, 2rem + 8vw, 9rem));
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 85% 15%, #24394a 0%, transparent 55%),
+      linear-gradient(170deg, var(--petrol-deep) 0%, var(--schott-black) 70%);
+  }
+  .hero__sky { position: absolute; inset: 0; pointer-events: none; }
+  .hero__halftone {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(237 230 217 / 0.22) 1px, transparent 1.3px);
+    background-size: 9px 9px;
+    -webkit-mask-image: radial-gradient(45% 55% at 78% 34%, #000 0%, transparent 100%);
+    mask-image: radial-gradient(45% 55% at 78% 34%, #000 0%, transparent 100%);
+    opacity: 0.6;
+  }
+  .hero__glow {
+    position: absolute;
+    width: 46vw; height: 46vw;
+    max-width: 680px; max-height: 680px;
+    right: 6%; top: 4%;
+    background: radial-gradient(circle, rgb(242 182 110 / 0.55) 0%, rgb(224 146 58 / 0.2) 22%, rgb(224 146 58 / 0.04) 48%, transparent 66%);
+    animation: breathe 9s ease-in-out infinite;
+  }
+  :global(.hero__star) {
+    position: absolute;
+    right: calc(6% + min(23vw, 340px) - 60px);
+    top: calc(4% + min(23vw, 340px) - 60px);
+    color: #FBE3C2;
+    filter: drop-shadow(0 0 18px rgb(242 182 110 / 0.9));
+    animation: twinkle 9s ease-in-out infinite;
+  }
+  @keyframes breathe { 50% { transform: scale(1.06); opacity: 0.85; } }
+  @keyframes twinkle { 50% { transform: rotate(8deg) scale(0.94); } }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__glow, :global(.hero__star) { animation: none; }
+  }
+  .hero__inner { position: relative; }
+  .hero h1 { max-width: 13ch; margin-bottom: 1.6rem; }
+  .hero__red { color: #E2574F; }
+  .hero__lede { max-width: 46ch; color: color-mix(in srgb, var(--bone-paper) 82%, transparent); margin-bottom: 2.5rem; }
+  .hero__lede em { font-family: var(--font-heading); font-style: italic; color: var(--bone-paper); white-space: nowrap; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 1.75rem; align-items: center; }
+  .hero__strip {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2.5rem;
+    margin-top: clamp(4rem, 3rem + 6vw, 8rem);
+    padding-block: 1.4rem;
+    border-top: 1px solid rgb(237 230 217 / 0.14);
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cold-ash);
+  }
+
+  /* FOG */
+  .fog__grid { display: grid; grid-template-columns: 5fr 6fr; gap: clamp(2rem, 1rem + 5vw, 6rem); }
+  .fog h2 { font-size: var(--step-4); max-width: 12ch; position: sticky; top: 2rem; }
+  .fog__body .lede { max-width: 34ch; }
+  .fog__body .credo { margin-top: 2.5rem; }
+  .fog__body .credo h3 { font-size: var(--step-2); margin: 0; }
+
+  /* WHO */
+  .section--flush-top { padding-top: 0; }
+  .who__title { margin-bottom: 2.5rem; }
+  .who__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .who__card {
+    padding: clamp(1.75rem, 1.25rem + 2vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-radius: var(--radius);
+  }
+  .who__card--investor { background: var(--dusk-petrol); color: var(--bone-paper); }
+  .who__card--investor .link-arrow:hover { color: var(--amber-soft); }
+  .who__card--brand { background: var(--bone-deep); border: 1px solid color-mix(in srgb, var(--cold-ash) 40%, transparent); }
+  .who__kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    opacity: 0.75;
+  }
+  .who__card h3 { max-width: 20ch; }
+  .who__list { margin: 0.5rem 0 2rem; display: grid; gap: 0.6rem; }
+  .who__list li { padding-left: 1.5rem; position: relative; }
+  .who__list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0.7em;
+    width: 0.7rem; height: 1px;
+    background: currentColor;
+  }
+  .who__card .link-arrow { margin-top: auto; align-self: flex-start; }
+
+  /* OFFERS */
+  .offers { padding-top: 0; }
+  .offers__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .offers__head h2 { margin: 0; }
+  .offers__head .lede { margin: 0; }
+  .offers__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 2px solid var(--schott-black);
+    padding: 0;
+    list-style: none;
+  }
+  .offer a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.75rem 1.5rem 1.5rem;
+    text-decoration: none;
+    border-right: var(--rule);
+    transition: background 200ms ease;
+  }
+  .offer:last-child a { border-right: 0; }
+  .offer a:hover { background: var(--bone-deep); color: inherit; }
+  .offer__num { font-size: var(--step--1); font-weight: 700; color: var(--monk-red); letter-spacing: 0.08em; margin-bottom: 2.5rem; }
+  .offer h3 { font-size: var(--step-2); }
+  .offer p { color: var(--ash-dark); font-size: var(--step--1); line-height: 1.55; margin-bottom: 2rem; }
+  .offer__foot { margin-top: auto; display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+  .offer__price { font-family: var(--font-heading); font-size: var(--step-1); font-weight: 600; }
+  .offer__seats { font-size: var(--step--1); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .offer__foot .arrow { margin-left: auto; transition: transform 160ms ease; }
+  .offer a:hover .arrow { transform: translateX(4px); }
+  /* Fractional is the page's one bold Monk Red surface */
+  .offer--bold a { background: var(--monk-red); color: var(--bone-paper); border-right: 0; }
+  .offer--bold a:hover { background: var(--monk-red-deep); color: var(--bone-paper); }
+  .offer--bold .offer__num, .offer--bold p { color: color-mix(in srgb, var(--bone-paper) 80%, transparent); }
+
+  /* APPROACH */
+  .approach__grid { display: grid; grid-template-columns: 5fr 6fr; gap: clamp(2rem, 1rem + 5vw, 6rem); }
+  .approach h2 { font-size: var(--step-4); }
+  .approach__list li { border-color: rgb(237 230 217 / 0.16) !important; }
+  .approach__list h3 { font-size: var(--step-2); margin-bottom: 0.35rem; }
+  .approach__list p { margin: 0; }
+
+  /* PROOF */
+  .proof__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 3rem;
+  }
+  .proof__head h2 { margin: 0; max-width: 18ch; font-size: var(--step-3); }
+  .proof__head p { margin: 0; }
+  .proof__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 0 3.5rem;
+    border-top: 2px solid var(--schott-black);
+  }
+  .proof__stat { padding: 1.5rem 1.5rem 0 0; }
+  .proof__stat + .proof__stat { padding-left: 1.5rem; border-left: var(--rule); }
+  .proof__stat dt {
+    font-family: var(--font-heading);
+    font-size: var(--step-4);
+    font-weight: 700;
+    color: var(--monk-red);
+    line-height: 1;
+    margin-bottom: 0.6rem;
+  }
+  .proof__stat dd { margin: 0; color: var(--ash-dark); font-size: var(--step--1); max-width: 26ch; }
+  .proof__label {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash-dark);
+    margin-bottom: 1rem;
+  }
+  .proof__row { padding-block: 2rem; border-top: var(--rule); border-bottom: var(--rule); margin-bottom: 3rem; }
+  .proof__names { display: flex; flex-wrap: wrap; gap: 0.5rem 2.25rem; }
+  .proof__names li { font-family: var(--font-heading); font-size: var(--step-2); font-weight: 600; letter-spacing: -0.01em; }
+  .proof__names--small li { font-size: var(--step-1); color: var(--ash-dark); }
+  .proof__split { display: grid; grid-template-columns: 3fr 2fr; gap: clamp(2rem, 1rem + 4vw, 5rem); }
+  .appear { margin-bottom: 1.5rem; }
+  .appear li {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 0.15rem 1rem;
+    padding-block: 0.9rem;
+    border-top: var(--rule);
+  }
+  .appear li:last-child { border-bottom: var(--rule); }
+  .appear__kind { grid-row: span 2; font-size: var(--step--1); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--monk-red); padding-top: 0.2em; }
+  .appear__title { font-weight: 700; }
+  .appear__where { font-size: var(--step--1); }
+
+  /* WRITING */
+  .writing-teaser { background: var(--bone-deep); }
+  .writing-teaser__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .writing-teaser h2 { font-size: var(--step-3); margin: 0; max-width: 16ch; }
+  .writing-teaser__list li a { display: block; padding-block: 1rem; border-top: var(--rule); text-decoration: none; }
+  .writing-teaser__list h3 { font-size: var(--step-1); margin-bottom: 0.3rem; }
+  .writing-teaser__empty .lede { max-width: 36ch; }
+
+  @media (max-width: 960px) {
+    .offers__grid { grid-template-columns: 1fr 1fr; }
+    .offer:nth-child(2) a { border-right: 0; }
+    .offer:nth-child(n + 3) a { border-top: var(--rule); }
+    .proof__stats { grid-template-columns: 1fr 1fr; }
+    .proof__stat:nth-child(3) { padding-left: 0; border-left: 0; }
+    .proof__stat:nth-child(n + 3) { padding-top: 2rem; }
+  }
+  @media (max-width: 760px) {
+    .fog__grid, .approach__grid, .who__grid, .offers__head, .proof__head, .proof__split, .writing-teaser__grid { grid-template-columns: 1fr; }
+    .fog h2 { position: static; }
+    .offers__grid { grid-template-columns: 1fr; }
+    .offer a { border-right: 0; border-top: var(--rule); }
+    .offer:first-child a { border-top: 0; }
+    .offer__num { margin-bottom: 1rem; }
+    .hero__glow { width: 90vw; height: 90vw; right: -30vw; top: -10vw; }
+    :global(.hero__star) { right: calc(-30vw + 45vw - 60px); top: calc(-10vw + 45vw - 60px); }
+  }
+  @media (max-width: 480px) {
+    .proof__stats { grid-template-columns: 1fr; }
+    .proof__stat, .proof__stat + .proof__stat { padding: 1.25rem 0 0; border-left: 0; }
+    .appear li { grid-template-columns: 1fr; }
+    .appear__kind { grid-row: auto; }
+  }
+</style>

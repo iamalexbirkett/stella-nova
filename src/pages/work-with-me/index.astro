@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { offers } from '../../data/site';
+---
+<Base
+  title="Work with me"
+  description="Four ways to work with Stella Nova: training and workshops, AI visibility audits and roadmaps, ongoing advisory, and fractional AEO leadership."
+>
+  <section class="phero">
+    <div class="wrap">
+      <p class="eyebrow">Work with me</p>
+      <h1>Four ways in.</h1>
+      <p class="lede">
+        Start where the need is sharpest. Most companies begin with a workshop or an audit, and some never need more
+        than that. The best engagements leave your team running it without me.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="table" role="table" aria-label="Compare engagements">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">Engagement</span>
+          <span role="columnheader">Best for</span>
+          <span role="columnheader">Format</span>
+          <span role="columnheader">Investment</span>
+        </div>
+        {offers.map((o, i) => (
+          <a href={`/work-with-me/${o.slug}`} class:list={['table__row', { 'table__row--bold': o.seats }]} role="row">
+            <span role="cell" class="table__name">
+              <span class="table__n">{String(i + 1).padStart(2, '0')}</span>
+              {o.name}
+            </span>
+            <span role="cell">{o.bestFor}</span>
+            <span role="cell">{o.format}</span>
+            <span role="cell" class="table__price">
+              {o.price}
+              {o.seats && <small>{o.seats.total} seats, total</small>}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap notsure">
+      <h2>Not sure which one fits?</h2>
+      <p class="lede muted">
+        Tell me what’s going on: the market, the team, and the number you’re worried about. I’ll tell you which of
+        these makes sense, or if none of them do.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .phero { padding-block: clamp(3.5rem, 2rem + 6vw, 7rem) 1rem; }
+  .phero h1 { margin-bottom: 1.25rem; }
+  .phero .lede { max-width: 48ch; }
+
+  .table { border-top: 2px solid var(--schott-black); }
+  .table__row {
+    display: grid;
+    grid-template-columns: 2.2fr 2fr 1.8fr 1.1fr;
+    gap: 1.5rem;
+    padding: 1.4rem 1rem;
+    border-bottom: var(--rule);
+    text-decoration: none;
+    align-items: baseline;
+    transition: background 200ms ease;
+  }
+  a.table__row:hover { background: var(--bone-deep); color: inherit; }
+  .table__row--head {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ash-dark);
+    padding-block: 0.9rem;
+  }
+  .table__row--bold { background: var(--monk-red); color: var(--bone-paper); border-bottom: 0; }
+  a.table__row--bold:hover { background: var(--monk-red-deep); color: var(--bone-paper); }
+  .table__name { font-family: var(--font-heading); font-size: var(--step-2); font-weight: 600; line-height: 1.1; display: flex; gap: 0.9rem; align-items: baseline; }
+  .table__n { font-family: var(--font-body); font-size: var(--step--1); font-weight: 700; color: var(--monk-red); }
+  .table__row--bold .table__n { color: var(--bone-paper); opacity: 0.75; }
+  .table__price { font-family: var(--font-heading); font-size: var(--step-1); font-weight: 700; }
+  .table__price small { display: block; font-family: var(--font-body); font-size: var(--step--1); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .notsure { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+  .notsure h2 { font-size: var(--step-3); }
+
+  @media (max-width: 820px) {
+    .table__row--head { display: none; }
+    .table__row { grid-template-columns: 1fr; gap: 0.35rem; padding-inline: 0.75rem; }
+    .notsure { grid-template-columns: 1fr; }
+  }
+</style>

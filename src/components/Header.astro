@@ -1,0 +1,94 @@
+---
+import Logo from './Logo.astro';
+import { nav } from '../data/site';
+interface Props { tone?: 'light' | 'dark' }
+const { tone = 'light' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<header class:list={['header', `header--${tone}`]}>
+  <div class="wrap header__inner">
+    <Logo tone={tone} />
+    <nav class="header__nav" aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <a href="/contact" class="btn btn--ghost header__cta">Talk to me</a>
+    </nav>
+    <details class="header__menu">
+      <summary aria-label="Menu"><span></span><span></span></summary>
+      <div class="header__sheet">
+        <ul>
+          {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          <li><a href="/contact">Talk to me</a></li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</header>
+<style>
+  .header { position: relative; z-index: 20; }
+  .header--light { border-bottom: var(--rule); }
+  .header--dark { color: var(--bone-paper); }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 76px;
+  }
+  .header__nav { display: flex; align-items: center; gap: 2.25rem; }
+  .header__nav ul { display: flex; gap: 1.9rem; }
+  .header__nav a:not(.btn) {
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+  }
+  .header__nav a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 2px;
+    background: var(--monk-red);
+  }
+  .header--dark .header__nav a[aria-current='page']::after { background: var(--bone-paper); }
+  .header__cta { padding: 0.6em 1.1em; font-size: var(--step--1); }
+
+  .header__menu { display: none; position: relative; }
+  .header__menu summary {
+    list-style: none;
+    cursor: pointer;
+    width: 44px; height: 44px;
+    display: grid; place-content: center; gap: 6px;
+  }
+  .header__menu summary::-webkit-details-marker { display: none; }
+  .header__menu summary span { display: block; width: 24px; height: 2px; background: currentColor; transition: transform 200ms ease; }
+  .header__menu[open] summary span:first-child { transform: translateY(4px) rotate(45deg); }
+  .header__menu[open] summary span:last-child { transform: translateY(-4px) rotate(-45deg); }
+  .header__sheet {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    min-width: 220px;
+    background: var(--schott-black);
+    color: var(--bone-paper);
+    padding: 1rem 1.25rem;
+    box-shadow: 0 20px 40px -20px rgb(0 0 0 / 0.5);
+  }
+  .header__sheet li a {
+    display: block;
+    padding: 0.7rem 0;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    border-bottom: 1px solid rgb(237 230 217 / 0.15);
+  }
+  .header__sheet li:last-child a { border: 0; color: var(--amber-soft); }
+
+  @media (max-width: 820px) {
+    .header__nav { display: none; }
+    .header__menu { display: block; }
+  }
+</style>

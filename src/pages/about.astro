@@ -1,0 +1,217 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { appearances, bylines, helpedGrow, proofPoints, site } from '../data/site';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${site.url}/about#alex`,
+    name: 'Alex Birkett',
+    url: `${site.url}/about`,
+    sameAs: [site.founder.url],
+    jobTitle: 'Founder',
+    worksFor: { '@id': `${site.url}/#org` },
+    knowsAbout: ['Answer engine optimization', 'AI search', 'SEO', 'Conversion rate optimization', 'Growth experimentation', 'Organic growth'],
+  },
+];
+---
+<Base
+  title="About"
+  description="Alex Birkett founded Stella Nova after a career building experimentation programs, publishing engines and data products inside growth teams at CXL, HubSpot, Workato and Jasper."
+  schema={schema}
+>
+  <section class="ahero">
+    <div class="wrap ahero__grid">
+      <div>
+        <p class="eyebrow">About</p>
+        <h1>I find companies with more inside them than their results admit.</h1>
+      </div>
+      <figure class="ahero__plate" aria-hidden="true">
+        <div class="ahero__dots"></div>
+        <Mark size={140} class="ahero__mark" />
+        <figcaption>Alex Birkett, founder</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap story">
+      <div class="story__aside">
+        <p class="eyebrow">The story</p>
+      </div>
+      <div class="prose">
+        <p class="lede">
+          I’m Alex Birkett. I’ve spent my career inside growth teams, building the thing rather than advising from
+          the side.
+        </p>
+        <p>
+          I doubled blog traffic at CXL and helped launch CXL Institute. I built growth experiments and custom data
+          products at HubSpot, including a SERP analysis tool for brand mentions and a model that predicted content
+          decay. I built Workato’s experimentation program from scratch to more than 20 experiments a quarter. I helped
+          grow Jasper’s blog into a program with more than $4M in attributable ARR. I co-founded an organic growth agency
+          and scaled it past 35 people.
+        </p>
+        <p>
+          Across all of it, the same pattern kept showing up. The companies that pulled away weren’t the ones following
+          the playbook most faithfully. They were the ones running experiments the playbook hadn’t caught up to yet, and
+          building teams that could keep doing it.
+        </p>
+        <p>
+          Now AI search has scrambled how buyers discover, trust and choose companies. Nobody has the final map. Not the
+          platforms, not the tool vendors, not me. What I do have is a method: measure honestly, test fast, keep what
+          works, and build that habit into the team so it outlasts any single engagement.
+        </p>
+        <p>That’s Stella Nova.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight why dark">
+    <div class="wrap why__grid">
+      <Mark size={88} class="why__mark" />
+      <div>
+        <p class="eyebrow">Why “Stella Nova”</p>
+        <p class="why__text">
+          A nova is a star that suddenly burns far brighter than it did before. That’s the job: find the company with
+          more inside it than it’s showing, and help it become the <em>N of 1</em> in its category.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap story">
+      <div class="story__aside">
+        <p class="eyebrow">What I believe</p>
+      </div>
+      <ol class="credo beliefs">
+        <li><h3>I’d rather be wrong out loud than correct on cue.</h3></li>
+        <li><h3>Polish is cheap. Frequency and nerve are not.</h3></li>
+        <li><h3>I’ll hold your ceiling higher than you hold it yourself.</h3></li>
+        <li><h3>If it could have been written by anyone, I didn’t write it.</h3></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--tight band">
+    <div class="wrap">
+      <dl class="stats">
+        {proofPoints.map((p) => (
+          <div><dt>{p.figure}</dt><dd>{p.label}</dd></div>
+        ))}
+      </dl>
+      <p class="label">Organic programs I’ve built or helped grow</p>
+      <ul class="names">{helpedGrow.map((n) => <li>{n}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="section" id="speaking">
+    <div class="wrap story">
+      <div class="story__aside">
+        <p class="eyebrow">Talks, podcasts, writing</p>
+        <p class="muted">
+          I speak about AI search, organic growth, experimentation and analytics. For conference, podcast or
+          workshop requests, <a href="/contact?interest=speaking">get in touch</a>.
+        </p>
+      </div>
+      <div>
+        <ul class="appear">
+          {appearances.map((a) => (
+            <li>
+              <span class="appear__kind">{a.kind}</span>
+              <span class="appear__title">{a.title}</span>
+              <span class="appear__where muted">{a.where}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="label">Written for or quoted in</p>
+        <ul class="names names--small">{bylines.map((n) => <li>{n}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight band">
+    <div class="wrap story">
+      <div class="story__aside">
+        <p class="eyebrow">Off the clock</p>
+      </div>
+      <p class="lede offclock">
+        Skiing, guitar, jiu jitsu, sailing and live music. Strong opinions about ’90s punk, decision theory, and the
+        best coffee shop in whatever city I’m in. Wisconsin Badgers, always.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand heading="Let’s find out what your team has in it." />
+</Base>
+
+<style>
+  .ahero { padding-block: clamp(3rem, 2rem + 5vw, 6rem); border-bottom: var(--rule); }
+  .ahero__grid { display: grid; grid-template-columns: 3fr 2fr; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: end; }
+  .ahero h1 { font-size: var(--step-4); max-width: 16ch; margin: 0; }
+  /* Portrait placeholder: a petrol duotone plate. Swap for the real dusk-lit duotone portrait. */
+  .ahero__plate {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    background: linear-gradient(160deg, var(--dusk-petrol), var(--petrol-deep));
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .ahero__dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgb(237 230 217 / 0.35) 1.1px, transparent 1.4px);
+    background-size: 8px 8px;
+    -webkit-mask-image: radial-gradient(60% 50% at 50% 45%, #000, transparent);
+    mask-image: radial-gradient(60% 50% at 50% 45%, #000, transparent);
+  }
+  :global(.ahero__mark) { position: relative; color: var(--bone-paper); }
+  .ahero__plate figcaption {
+    position: absolute; left: 1rem; bottom: 0.9rem;
+    font-size: var(--step--1); letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgb(237 230 217 / 0.7);
+  }
+
+  .story { display: grid; grid-template-columns: 4fr 7fr; gap: clamp(2rem, 1rem + 4vw, 5rem); }
+  .story__aside p.muted { max-width: 30ch; }
+  .prose .lede { max-width: none; }
+
+  .why__grid { display: grid; grid-template-columns: auto 1fr; gap: clamp(1.5rem, 1rem + 3vw, 4rem); align-items: center; }
+  :global(.why__mark) { color: var(--monk-red); }
+  .why__text { font-family: var(--font-heading); font-size: var(--step-3); line-height: 1.2; max-width: 26ch; margin: 0; }
+  .why__text em { color: var(--amber-soft); }
+
+  .beliefs h3 { font-size: var(--step-2); margin: 0; }
+
+  .band { background: var(--bone-deep); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin: 0 0 2.5rem; }
+  .stats dt { font-family: var(--font-heading); font-size: var(--step-4); font-weight: 700; color: var(--monk-red); line-height: 1; margin-bottom: 0.5rem; }
+  .stats dd { margin: 0; font-size: var(--step--1); color: var(--ash-dark); max-width: 26ch; }
+  .label { font-size: var(--step--1); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash-dark); margin: 2rem 0 1rem; }
+  .names { display: flex; flex-wrap: wrap; gap: 0.5rem 2.25rem; }
+  .names li { font-family: var(--font-heading); font-size: var(--step-2); font-weight: 600; }
+  .names--small li { font-size: var(--step-1); color: var(--ash-dark); }
+
+  .appear li { display: grid; grid-template-columns: 6rem 1fr; gap: 0.15rem 1rem; padding-block: 0.9rem; border-top: var(--rule); }
+  .appear li:last-child { border-bottom: var(--rule); }
+  .appear__kind { grid-row: span 2; font-size: var(--step--1); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--monk-red); padding-top: 0.2em; }
+  .appear__title { font-weight: 700; }
+  .appear__where { font-size: var(--step--1); }
+
+  .offclock { max-width: 40ch; margin: 0; }
+
+  @media (max-width: 820px) {
+    .ahero__grid, .story { grid-template-columns: 1fr; }
+    .ahero__plate { max-width: 360px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .why__grid { grid-template-columns: 1fr; }
+    .appear li { grid-template-columns: 1fr; }
+    .appear__kind { grid-row: auto; }
+  }
+</style>

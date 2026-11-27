@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+---
+<Base title="Writing" description="Field notes from Stella Nova: research, experiments and unpopular opinions about organic growth and AI search.">
+  <section class="phero">
+    <div class="wrap">
+      <p class="eyebrow">Field notes</p>
+      <h1>Writing.</h1>
+      <p class="lede">Research, experiments, and unpopular opinions about organic growth and AI search. Published unpolished and often.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      {posts.length === 0 ? (
+        <div class="empty">
+          <p class="empty__n" aria-hidden="true">00</p>
+          <div>
+            <h2>Nothing published yet.</h2>
+            <p class="lede muted">The first pieces are on the bench. In the meantime, my older writing on growth and experimentation lives at <a href="https://www.alexbirkett.com/blog/">alexbirkett.com</a>.</p>
+          </div>
+        </div>
+      ) : (
+        <ol class="posts">
+          {posts.map((p) => (
+            <li>
+              <a href={`/writing/${p.id}`}>
+                <time datetime={p.data.pubDate.toISOString()}>{fmt(p.data.pubDate)}</time>
+                <span>
+                  <h2>{p.data.title}</h2>
+                  <p class="muted">{p.data.description}</p>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .phero { padding-block: clamp(3.5rem, 2rem + 6vw, 7rem) 1rem; }
+  .phero .lede { max-width: 44ch; }
+  .empty { display: grid; grid-template-columns: auto 1fr; gap: 2rem; border-top: 2px solid var(--schott-black); padding-top: 2rem; }
+  .empty__n { font-family: var(--font-heading); font-size: var(--step-5); color: var(--monk-red); line-height: 1; margin: 0; }
+  .empty h2 { font-size: var(--step-3); }
+  .posts { border-top: 2px solid var(--schott-black); padding: 0; list-style: none; }
+  .posts a { display: grid; grid-template-columns: 9rem 1fr auto; gap: 1.5rem; padding-block: 1.5rem; border-bottom: var(--rule); text-decoration: none; align-items: baseline; }
+  .posts time { font-size: var(--step--1); color: var(--ash-dark); }
+  .posts h2 { font-size: var(--step-2); margin-bottom: 0.3rem; }
+  .posts p { margin: 0; }
+  @media (max-width: 640px) {
+    .empty, .posts a { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+</style>

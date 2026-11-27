@@ -1,0 +1,254 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { offers, site, type Offer } from '../../data/site';
+
+export function getStaticPaths() {
+  return offers.map((offer) => ({ params: { slug: offer.slug }, props: { offer } }));
+}
+
+const { offer } = Astro.props as { offer: Offer };
+const idx = offers.findIndex((o) => o.slug === offer.slug);
+const others = offers.filter((o) => o.slug !== offer.slug);
+const url = `${site.url}/work-with-me/${offer.slug}`;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${url}#service`,
+    name: offer.name,
+    description: offer.lede,
+    url,
+    provider: { '@id': `${site.url}/#org` },
+    audience: { '@type': 'BusinessAudience', name: offer.bestFor },
+    offers: {
+      '@type': 'Offer',
+      priceSpecification: {
+        '@type': offer.priceUnit ? 'UnitPriceSpecification' : 'PriceSpecification',
+        priceCurrency: 'USD',
+        minPrice: offer.priceValue,
+        ...(offer.priceUnit ? { unitCode: offer.priceUnit } : {}),
+      },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: offer.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Work with me', item: `${site.url}/work-with-me` },
+      { '@type': 'ListItem', position: 2, name: offer.name, item: url },
+    ],
+  },
+];
+const bold = Boolean(offer.seats);
+---
+<Base title={offer.name} description={`${offer.lede} ${offer.price}.`} schema={schema}>
+  <section class:list={['ohero', { 'ohero--bold': bold }]}>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/work-with-me">Work with me</a> <span aria-hidden="true">/</span> <span>{String(idx + 1).padStart(2, '0')}</span>
+      </nav>
+      <div class="ohero__grid">
+        <div>
+          <p class="eyebrow">{offer.name}</p>
+          <h1>{offer.lede}</h1>
+        </div>
+        <aside class="ohero__facts" aria-label="At a glance">
+          <dl>
+            <div><dt>Investment</dt><dd class="ohero__price">{offer.price}</dd></div>
+            <div><dt>Best for</dt><dd>{offer.bestFor}</dd></div>
+            <div><dt>Format</dt><dd>{offer.format}</dd></div>
+            {offer.seats && (
+              <div>
+                <dt>Availability</dt>
+                <dd>
+                  {offer.seats.open === null
+                    ? `${offer.seats.total} companies at a time. Ask about the next opening.`
+                    : `${offer.seats.open} of ${offer.seats.total} seats open`}
+                </dd>
+              </div>
+            )}
+          </dl>
+          <a href={`/contact?interest=${offer.slug}`} class="btn btn--amber">Talk to me <span class="arrow" aria-hidden="true">→</span></a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="two__label"><p class="eyebrow">The short version</p></div>
+      <div class="prose intro">
+        {offer.intro.map((p, i) => <p class:list={{ lede: i === 0 }}>{p}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight band">
+    <div class="wrap">
+      <p class="eyebrow">Who it’s for</p>
+      <div class="cards">
+        {offer.forWho.map((w) => (
+          <article>
+            <h3>{w.title}</h3>
+            <p class="muted">{w.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="two__label">
+        <p class="eyebrow">What’s included</p>
+        <h2>The work.</h2>
+      </div>
+      <ul class="includes">
+        {offer.includes.map((x) => (
+          <li>
+            <h3>{x.title}</h3>
+            <p class="muted">{x.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap">
+      <p class="eyebrow">How it runs</p>
+      <ol class="steps">
+        {offer.process.map((s, i) => (
+          <li>
+            <span class="steps__n">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{s.title}</h3>
+            <p class="muted">{s.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="two__label">
+        <p class="eyebrow">You leave with</p>
+      </div>
+      <ol class="credo leave">
+        {offer.leaveWith.map((l) => <li><h3>{l}</h3></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--tight band">
+    <div class="wrap two">
+      <div class="two__label">
+        <p class="eyebrow">Questions</p>
+      </div>
+      <div class="faq">
+        {offer.faq.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="eyebrow">Other ways in</p>
+      <ul class="others">
+        {others.map((o) => (
+          <li>
+            <a href={`/work-with-me/${o.slug}`}>
+              <span class="others__name">{o.name}</span>
+              <span class="others__price muted">{o.price}</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand heading={bold ? 'Two seats. Let’s see if one is yours.' : undefined} />
+</Base>
+
+<style>
+  .ohero { padding-block: clamp(2rem, 1rem + 3vw, 3.5rem) clamp(3.5rem, 2rem + 5vw, 6rem); border-bottom: var(--rule); }
+  .ohero--bold { background: var(--monk-red); color: var(--bone-paper); border-bottom: 0; }
+  .ohero--bold .eyebrow, .ohero--bold .crumbs a { color: var(--bone-paper); }
+  .ohero--bold a:hover { color: var(--bone-paper); }
+  .crumbs { font-size: var(--step--1); color: var(--ash-dark); margin-bottom: clamp(2rem, 1rem + 4vw, 4.5rem); display: flex; gap: 0.5rem; }
+  .ohero--bold .crumbs { color: color-mix(in srgb, var(--bone-paper) 75%, transparent); }
+  .ohero__grid { display: grid; grid-template-columns: 7fr 4fr; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: end; }
+  .ohero h1 { font-size: var(--step-4); max-width: 18ch; margin: 0; }
+  .ohero__facts dl { margin: 0 0 1.75rem; }
+  .ohero__facts dl > div { padding-block: 0.8rem; border-top: var(--rule); }
+  .ohero--bold .ohero__facts dl > div { border-color: rgb(237 230 217 / 0.35); }
+  .ohero__facts dt { font-size: var(--step--1); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7; }
+  .ohero__facts dd { margin: 0.15rem 0 0; }
+  .ohero__price { font-family: var(--font-heading); font-size: var(--step-2); font-weight: 700; }
+
+  .two { display: grid; grid-template-columns: 4fr 7fr; gap: clamp(2rem, 1rem + 4vw, 5rem); }
+  .two__label h2 { font-size: var(--step-3); }
+  .intro .lede { max-width: none; }
+
+  .band { background: var(--bone-deep); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+  .cards article { border-top: 2px solid var(--schott-black); padding-top: 1.25rem; }
+  .cards h3 { font-size: var(--step-1); }
+  .cards p { margin: 0; }
+
+  .includes li { padding-block: 1.25rem; border-top: var(--rule); display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; }
+  .includes li:last-child { border-bottom: var(--rule); }
+  .includes h3 { font-size: var(--step-1); margin: 0; }
+  .includes p { margin: 0; }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 2rem; padding: 0; list-style: none; }
+  .steps li { border-top: 1px solid rgb(237 230 217 / 0.2); padding-top: 1.25rem; }
+  .steps__n { display: block; font-family: var(--font-heading); font-size: var(--step-3); color: var(--amber-soft); line-height: 1; margin-bottom: 1rem; }
+  .steps h3 { font-size: var(--step-1); }
+  .steps p { margin: 0; }
+
+  .leave h3 { font-size: var(--step-2); margin: 0; }
+
+  .faq details { border-top: var(--rule); }
+  .faq details:last-child { border-bottom: var(--rule); }
+  .faq summary {
+    cursor: pointer;
+    list-style: none;
+    padding-block: 1.2rem;
+    font-family: var(--font-heading);
+    font-size: var(--step-1);
+    font-weight: 600;
+    display: flex; justify-content: space-between; gap: 1rem;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; font-family: var(--font-body); color: var(--monk-red); transition: transform 200ms ease; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { max-width: var(--measure); padding-bottom: 1rem; }
+
+  .others { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--schott-black); }
+  .others a { display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap; padding: 1.25rem 1.25rem 1.25rem 0; text-decoration: none; }
+  .others li + li a { padding-left: 1.25rem; border-left: var(--rule); }
+  .others__name { font-family: var(--font-heading); font-size: var(--step-1); font-weight: 600; }
+  .others .arrow { margin-left: auto; transition: transform 160ms ease; }
+  .others a:hover .arrow { transform: translateX(4px); }
+
+  @media (max-width: 820px) {
+    .ohero__grid, .two { grid-template-columns: 1fr; }
+    .includes li { grid-template-columns: 1fr; gap: 0.4rem; }
+    .others { grid-template-columns: 1fr; }
+    .others li + li a { padding-left: 0; border-left: 0; border-top: var(--rule); }
+  }
+</style>
