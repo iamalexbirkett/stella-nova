@@ -5,6 +5,8 @@ export const site = {
   tagline: 'Organic growth research & advisory',
   description:
     'Stella Nova is an organic growth research and advisory firm. Alex Birkett helps investors, their portfolio companies, and ambitious brands find their way through AI search and build the experimentation muscle that turns a strong brand into the category leader.',
+  // Web3Forms access key (https://web3forms.com). It's meant to be public; it only lets the form send to your inbox.
+  formKey: '',
   founder: {
     name: 'Alex Birkett',
     url: 'https://www.alexbirkett.com',

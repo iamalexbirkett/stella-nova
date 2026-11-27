@@ -1,6 +1,6 @@
 # Stella Nova — stellanovainc.com
 
-Astro 7 site for Stella Nova. Static pages, plus one serverless function for the contact form, deployed on Vercel.
+Astro 7 site for Stella Nova. Fully static and hosted on GitHub Pages. Every push to `main` rebuilds and deploys it (see `.github/workflows/deploy.yml`).
 
 ## Develop
 
@@ -20,21 +20,16 @@ npm run build
 
 ## Contact form
 
-`/api/contact` sends each submission by email through [Resend](https://resend.com). Set these in Vercel under Project → Settings → Environment Variables:
-
-| Variable | Value |
-| --- | --- |
-| `RESEND_API_KEY` | API key from Resend |
-| `CONTACT_TO_EMAIL` | The inbox that receives inquiries |
-| `CONTACT_FROM_EMAIL` | Optional. Use a sender like `Stella Nova <hello@stellanovainc.com>` once the domain is verified in Resend. Until then the default `onboarding@resend.dev` sender works. |
-
-If the variables aren't set, the live form shows a "not connected yet" message. In local dev, submissions are logged to the terminal instead of sent.
+The form posts to [Web3Forms](https://web3forms.com), which emails each submission to you. Get a free access key by entering your inbox address on their site, then paste it into `formKey` in `src/data/site.ts`. The key is meant to be public. Until it's set, the form shows a "not connected yet" message.
 
 ## Domain (DNS at Squarespace)
 
-1. Vercel → Project → Settings → Domains: add `stellanovainc.com` and `www.stellanovainc.com`.
+1. GitHub → repo → Settings → Pages: set Source to **GitHub Actions**. The custom domain comes from `public/CNAME`.
 2. Squarespace → Domains → DNS Settings: delete the **Squarespace Defaults** preset.
-3. Add the records Vercel shows. Typically:
-   - `A` `@` → `76.76.21.21`
-   - `CNAME` `www` → `cname.vercel-dns.com`
-4. If you verify the domain in Resend for sending, add Resend's records here too (MX/TXT on a `send` subdomain, plus DKIM).
+3. Add these records:
+   - `A` `@` → `185.199.108.153`
+   - `A` `@` → `185.199.109.153`
+   - `A` `@` → `185.199.110.153`
+   - `A` `@` → `185.199.111.153`
+   - `CNAME` `www` → `iamalexbirkett.github.io`
+4. Once the domain resolves, tick **Enforce HTTPS** in Settings → Pages.

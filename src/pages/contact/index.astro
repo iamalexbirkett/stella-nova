@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Mark from '../../components/Mark.astro';
-import { offers } from '../../data/site';
+import { offers, site } from '../../data/site';
 
 const interests = [
   ...offers.map((o) => ({ value: o.slug, label: o.name })),
@@ -27,7 +27,11 @@ const interests = [
         <Mark size={64} class="contact__mark" />
       </div>
 
-      <form class="form" method="post" action="/api/contact" data-contact-form>
+      <form class="form" method="post" action="https://api.web3forms.com/submit" data-contact-form>
+        <input type="hidden" name="access_key" value={site.formKey} />
+        <input type="hidden" name="subject" value="Stella Nova inquiry" />
+        <input type="hidden" name="from_name" value="stellanovainc.com" />
+        <input type="hidden" name="redirect" value={`${site.url}/contact/thanks`} />
         <div class="form__row form__row--2">
           <label>
             <span>Name</span>
@@ -69,11 +73,7 @@ const interests = [
           <span>What’s going on?</span>
           <textarea name="message" rows="6" required maxlength="5000"></textarea>
         </label>
-        <label class="form__hp" aria-hidden="true">
-          <span>Leave this empty</span>
-          <input name="website" type="text" tabindex="-1" autocomplete="off" />
-        </label>
-        <input type="hidden" name="t" value="" />
+        <input type="checkbox" name="botcheck" class="form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div class="form__actions">
           <button type="submit" class="btn btn--amber">Send it <span class="arrow" aria-hidden="true">→</span></button>
           <p class="form__status" role="status" aria-live="polite"></p>
@@ -86,7 +86,6 @@ const interests = [
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
   if (form) {
-    const started = Date.now();
     const status = form.querySelector<HTMLElement>('.form__status')!;
     const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
 
@@ -98,20 +97,33 @@ const interests = [
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      (form.elements.namedItem('t') as HTMLInputElement).value = String(Date.now() - started);
+      const data = new FormData(form);
+      if (!data.get('access_key')) {
+        status.textContent = 'The form isn’t connected yet. Please try again shortly.';
+        return;
+      }
+      // Checkboxes share a name; send them as one readable field.
+      const payload: Record<string, string> = {};
+      for (const [k, v] of data) {
+        if (k === 'redirect' || k === 'botcheck') continue;
+        payload[k] = k === 'interest' && payload[k] ? `${payload[k]}, ${v}` : String(v);
+      }
+      if (data.get('botcheck')) return;
+      payload.replyto = payload.email;
+
       button.disabled = true;
       status.textContent = 'Sending…';
       try {
         const res = await fetch(form.action, {
           method: 'POST',
-          headers: { Accept: 'application/json' },
-          body: new FormData(form),
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
         });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || !json.success) throw new Error(json.message || 'Something went wrong. Please try again.');
         location.assign('/contact/thanks');
       } catch (err) {
-        status.textContent = err instanceof Error ? err.message : 'Something went wrong.';
+        status.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
         button.disabled = false;
       }
     });
@@ -172,7 +184,7 @@ const interests = [
   }
   .chip input:checked + span { background: var(--bone-paper); color: var(--schott-black) !important; border-color: var(--bone-paper); }
   .chip input:focus-visible + span { outline: 2px solid var(--amber-window); outline-offset: 2px; }
-  .form__hp { position: absolute; left: -9999px; }
+  .form__hp { position: absolute; left: -9999px; opacity: 0; }
   .form__actions { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.5rem; }
   .form__status { margin: 0; font-size: var(--step--1); color: var(--amber-soft); }
   .form button[disabled] { opacity: 0.6; cursor: progress; }
